@@ -1,5 +1,7 @@
 package com.wherewasi.backend.service;
 
+import com.wherewasi.backend.exception.AuthenticationFailedException;
+import com.wherewasi.backend.exception.EmailTakenException;
 import com.wherewasi.backend.model.Role;
 import com.wherewasi.backend.model.User;
 import com.wherewasi.backend.repository.UserRepository;
@@ -12,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -20,7 +24,11 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request) throws EmailTakenException {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new EmailTakenException("Email is already taken");
+        }
+
         var user = User.builder()
                 .name(request.getName())
                 .lastName(request.getLastName())
@@ -30,6 +38,7 @@ public class AuthService {
                 .build();
 
         if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
+            System.out.println(user);
             userRepository.save(user);
         }
 
@@ -38,7 +47,14 @@ public class AuthService {
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) throws AuthenticationFailedException {
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+
+        if (userOptional.isEmpty() ||
+            !passwordEncoder.matches(request.getPassword(), userOptional.get().getPassword())) {
+            throw new AuthenticationFailedException("Invalid login");
+        }
+
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getEmail(),
                 request.getPassword()
