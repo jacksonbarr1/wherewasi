@@ -1,5 +1,6 @@
 package com.wherewasi.backend.model;
 
+import com.wherewasi.backend.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
