@@ -34,3 +34,6 @@ build/
 
 .env
 bruno/
+
+movie_ids_07_14_2025.json
+tv_series_ids_07_15_2025.json
