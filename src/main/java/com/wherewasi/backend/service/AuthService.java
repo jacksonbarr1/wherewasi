@@ -38,7 +38,6 @@ public class AuthService {
                 .build();
 
         if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
-            System.out.println(user);
             userRepository.save(user);
         }
 
