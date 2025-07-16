@@ -12,8 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -28,20 +26,15 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TMDBIngestionServiceTest {
 
-    @Mock
-    private TMDBApiClient apiClient;
-
+    private final TestDataLoader testDataLoader = new TestDataLoader();
     @Mock
     ShowRepository showRepository;
-
+    @Mock
+    private TMDBApiClient apiClient;
     @Mock
     private ShowMapper showMapper;
-
     @InjectMocks
     private TMDBIngestionService ingestionService;
-
-    private final TestDataLoader testDataLoader = new TestDataLoader();
-
 
     @Test
     void testIngestionProcess() throws Exception {
