@@ -1,8 +1,8 @@
 package com.wherewasi.backend.service;
 
+import com.wherewasi.backend.enumeration.Role;
 import com.wherewasi.backend.exception.AuthenticationFailedException;
 import com.wherewasi.backend.exception.EmailTakenException;
-import com.wherewasi.backend.model.Role;
 import com.wherewasi.backend.model.User;
 import com.wherewasi.backend.repository.UserRepository;
 import com.wherewasi.backend.request.auth.AuthenticationRequest;
@@ -50,7 +50,7 @@ public class AuthService {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
         if (userOptional.isEmpty() ||
-            !passwordEncoder.matches(request.getPassword(), userOptional.get().getPassword())) {
+                !passwordEncoder.matches(request.getPassword(), userOptional.get().getPassword())) {
             throw new AuthenticationFailedException("Invalid login");
         }
 
