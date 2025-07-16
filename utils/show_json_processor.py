@@ -2,8 +2,10 @@ import json
 import sys
 from datetime import datetime
 
+
 def is_ascii(s):
     return all(ord(c) < 128 for c in s)
+
 
 def process_json(input_file_path, output_file_path):
     print(f"Processing file: {input_file_path}")
@@ -15,7 +17,8 @@ def process_json(input_file_path, output_file_path):
                 try:
                     show = json.loads(line)
 
-                    if 'original_name' in show and is_ascii(show['original_name']) and 'popularity' in show and show['popularity'] > 0.5:
+                    if 'original_name' in show and is_ascii(show['original_name']) and 'popularity' in show and show[
+                        'popularity'] > 0.5:
                         filtered_shows.append(show)
                         print(f"Adding show: {show['original_name']}")
                     else:
