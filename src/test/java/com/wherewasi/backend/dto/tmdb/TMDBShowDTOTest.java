@@ -1,6 +1,7 @@
 package com.wherewasi.backend.dto.tmdb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wherewasi.backend.AbstractTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -10,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ActiveProfiles("test")
-class TMDBShowDTOTest {
+class TMDBShowDTOTest extends AbstractTest {
 
     @Test
     void testJsonMappingToDTO() throws IOException {

@@ -1,5 +1,6 @@
 package com.wherewasi.backend.service;
 
+import com.wherewasi.backend.AbstractTest;
 import com.wherewasi.backend.client.TMDBApiClient;
 import com.wherewasi.backend.dto.tmdb.TMDBShowDTO;
 import com.wherewasi.backend.mapper.ShowMapper;
@@ -11,8 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -24,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TMDBIngestionServiceTest {
+public class TMDBIngestionServiceTest extends AbstractTest {
 
     private final TestDataLoader testDataLoader = new TestDataLoader();
     @Mock
