@@ -1,17 +1,18 @@
-package com.wherewasi.backend.dto.tmdb;
+package com.wherewasi.backend.service;
 
 import com.wherewasi.backend.client.TMDBApiClient;
+import com.wherewasi.backend.dto.tmdb.TMDBShowDTO;
 import com.wherewasi.backend.mapper.ShowMapper;
 import com.wherewasi.backend.model.Show;
 import com.wherewasi.backend.repository.ShowRepository;
-import com.wherewasi.backend.service.TMDBIngestionService;
 import com.wherewasi.backend.util.TestDataLoader;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -23,7 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TMDBIngestionServiceTest {
 
     private final TestDataLoader testDataLoader = new TestDataLoader();

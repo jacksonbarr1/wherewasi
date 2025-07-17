@@ -1,7 +1,5 @@
 package com.wherewasi.backend;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -13,7 +11,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Testcontainers
-public abstract class AbstractIntegrationTest {
+public abstract class AbstractIT {
 
     @Container
     private static final PostgreSQLContainer<?> postgresqlContainer =
@@ -24,15 +22,5 @@ public abstract class AbstractIntegrationTest {
         registry.add("spring.datasource.url", postgresqlContainer::getJdbcUrl);
         registry.add("spring.datasource.username", postgresqlContainer::getUsername);
         registry.add("spring.datasource.password", postgresqlContainer::getPassword);
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        postgresqlContainer.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        postgresqlContainer.stop();
     }
 }
