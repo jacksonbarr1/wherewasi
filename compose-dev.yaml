@@ -1,3 +1,6 @@
+# Docker compose configuration for development environment
+# Spring Boot application is run locally and uses Spring Boot Docker Compose plugin to spin up service containers
+
 services:
   postgres:
     image: 'postgres:17-alpine'
