@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -32,7 +33,7 @@ public class Show {
             joinColumns = @JoinColumn(name = "show_id"),
             inverseJoinColumns = @JoinColumn(name = "season_id")
     )
-    private Set<Season> seasons;
+    private List<Season> seasons;
 
     @ManyToMany
     @JoinTable(
@@ -40,7 +41,7 @@ public class Show {
             joinColumns = @JoinColumn(name = "show_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private Set<Genre> genres;
+    private List<Genre> genres;
 
     @ManyToMany
     @JoinTable(
@@ -48,5 +49,5 @@ public class Show {
             joinColumns = @JoinColumn(name = "show_id"),
             inverseJoinColumns = @JoinColumn(name = "creator_id")
     )
-    private Set<Creator> creators;
+    private List<Creator> creators;
 }

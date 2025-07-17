@@ -3,6 +3,7 @@ package com.wherewasi.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -20,5 +21,5 @@ public class Season {
     private Integer episodeCount;
 
     @OneToMany(mappedBy = "season", cascade = CascadeType.ALL)
-    private Set<Episode> episodes;
+    private List<Episode> episodes;
 }
