@@ -31,7 +31,7 @@ build/
 ### VS Code ###
 .vscode/
 
-.env
+.env*
 bruno/
 
 utils/movie_ids_07_14_2025.json
