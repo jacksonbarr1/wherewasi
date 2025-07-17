@@ -15,6 +15,7 @@ import java.util.Set;
 public class Season {
     @Id
     private Long id;
+    private String seasonName;
     private Integer seasonNumber;
     private Integer episodeCount;
 

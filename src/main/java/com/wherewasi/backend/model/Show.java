@@ -17,8 +17,6 @@ public class Show {
     @Id
     private Long id;
     private String name;
-    private int numSeasons;
-    private int numEpisodes;
     private String overview;
     private Date firstAirDate;
     private Date lastAirDate;
@@ -26,7 +24,7 @@ public class Show {
     private String backdropPath;
     private Float popularity;
     private Float voteAverage;
-    private int voteCount;
+    private Integer voteCount;
 
     @ManyToMany
     @JoinTable(
