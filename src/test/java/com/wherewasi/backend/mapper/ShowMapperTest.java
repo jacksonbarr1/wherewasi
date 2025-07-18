@@ -15,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,23 +77,104 @@ public class ShowMapperTest extends AbstractTest {
 
         Show actualShow = showMapper.toEntity(showDTO);
 
-        assertAll("Ensure all Show fields are mapped correctly",
-                () -> assertEquals(expectedShow.getId(), actualShow.getId()),
-                () -> assertEquals(expectedShow.getName(), actualShow.getName()),
-                () -> assertEquals(expectedShow.getOverview(), actualShow.getOverview()),
-                () -> assertEquals(expectedShow.getPopularity(), actualShow.getPopularity()),
-                () -> assertEquals(expectedShow.getFirstAirDate(), actualShow.getFirstAirDate()),
-                () -> assertEquals(expectedShow.getLastAirDate(), actualShow.getLastAirDate()),
-                () -> assertEquals(expectedShow.getPosterPath(), actualShow.getPosterPath()),
-                () -> assertEquals(expectedShow.getBackdropPath(), actualShow.getBackdropPath()),
-                () -> assertEquals(expectedShow.getVoteAverage(), actualShow.getVoteAverage()),
-                () -> assertEquals(expectedShow.getVoteCount(), actualShow.getVoteCount()),
-                () -> assertEquals(1, actualShow.getSeasons().size()),
-                () -> assertEquals(expectedSeason, actualShow.getSeasons().get(0)),
-                () -> assertEquals(1, actualShow.getGenres().size()),
-                () -> assertEquals(expectedGenre, actualShow.getGenres().get(0)),
-                () -> assertEquals(1, actualShow.getCreators().size()),
-                () -> assertEquals(expectedCreator, actualShow.getCreators().get(0))
+        assertThat(actualShow)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedShow);
+    }
+
+    @Test
+    void whenGivenNullShowDTO_thenToEntityReturnsNull() {
+        TMDBShowDTO showDTO = null;
+
+        Show actualShow = showMapper.toEntity(showDTO);
+
+        assertEquals(null, actualShow);
+    }
+
+    @Test
+    void whenGivenEmptyShowDTO_thenToEntityReturnsShowWithNullFields() {
+        TMDBShowDTO showDTO = TMDBShowDTO.builder().build();
+
+        Show actualShow = showMapper.toEntity(showDTO);
+
+        assertAll("Ensure all Show fields are null",
+                () -> assertNull(actualShow.getId()),
+                () -> assertNull(actualShow.getName()),
+                () -> assertNull(actualShow.getOverview()),
+                () -> assertNull(actualShow.getPopularity()),
+                () -> assertNull(actualShow.getFirstAirDate()),
+                () -> assertNull(actualShow.getLastAirDate()),
+                () -> assertNull(actualShow.getPosterPath()),
+                () -> assertNull(actualShow.getBackdropPath()),
+                () -> assertNull(actualShow.getVoteAverage()),
+                () -> assertNull(actualShow.getVoteCount()),
+                () -> assertNull(actualShow.getSeasons()),
+                () -> assertNull(actualShow.getGenres()),
+                () -> assertNull(actualShow.getCreators())
         );
     }
+
+    @Test
+    void whenGivenShowEntity_thenToDtoReturnsCorrectTMDBShowDTO() {
+        Show show = Show.builder()
+                .id(2316L)
+                .name("name")
+                .overview("overview")
+                .popularity(86.143f)
+                .firstAirDate(new Date(2023, 1, 1))
+                .lastAirDate(new Date(2025, 1, 1))
+                .posterPath("posterPath")
+                .backdropPath("backdropPath")
+                .voteAverage(8.58f)
+                .voteCount(100)
+                .seasons(List.of(Season.builder().id(7240L).seasonName("Season 1").seasonNumber(1).episodeCount(2).build()))
+                .genres(List.of(Genre.builder().id(1L).name("Drama").build()))
+                .creators(List.of(Creator.builder().id(101L).name("Creator One").imagePath("/path/to/image1.jpg").build()))
+                .build();
+
+        TMDBShowDTO expectedShowDTO = TMDBShowDTO.builder()
+                .id(2316L)
+                .name("name")
+                .overview("overview")
+                .popularity(86.143f)
+                .firstAirDate(new Date(2023, 1, 1))
+                .lastAirDate(new Date(2025, 1, 1))
+                .posterPath("posterPath")
+                .backdropPath("backdropPath")
+                .voteAverage(8.58f)
+                .voteCount(100)
+                .seasons(List.of(TMDBSeasonDTO.builder().id(7240L).name("Season 1").seasonNumber(1).episodeCount(2).build()))
+                .genres(List.of(TMDBGenreDTO.builder().id(1L).name("Drama").build()))
+                .creators(List.of(TMDBCreatorDTO.builder().id(101L).name("Creator One").imagePath("/path/to/image1.jpg").build()))
+                .build();
+
+        when(seasonMapper.toDto(show.getSeasons().get(0))).thenReturn(expectedShowDTO.getSeasons().get(0));
+        when(genreMapper.toDto(show.getGenres().get(0))).thenReturn(expectedShowDTO.getGenres().get(0));
+        when(creatorMapper.toDto(show.getCreators().get(0))).thenReturn(expectedShowDTO.getCreators().get(0));
+
+        TMDBShowDTO actualShowDTO = showMapper.toDto(show);
+
+        assertAll("Ensure all TMDBShowDTO fields are mapped correctly",
+                () -> assertEquals(expectedShowDTO.getId(), actualShowDTO.getId()),
+                () -> assertEquals(expectedShowDTO.getName(), actualShowDTO.getName()),
+                () -> assertEquals(expectedShowDTO.getOverview(), actualShowDTO.getOverview()),
+                () -> assertEquals(expectedShowDTO.getPopularity(), actualShowDTO.getPopularity()),
+                () -> assertEquals(expectedShowDTO.getFirstAirDate(), actualShowDTO.getFirstAirDate()),
+                () -> assertEquals(expectedShowDTO.getLastAirDate(), actualShowDTO.getLastAirDate()),
+                () -> assertEquals(expectedShowDTO.getPosterPath(), actualShowDTO.getPosterPath()),
+                () -> assertEquals(expectedShowDTO.getBackdropPath(), actualShowDTO.getBackdropPath()),
+                () -> assertEquals(expectedShowDTO.getVoteAverage(), actualShowDTO.getVoteAverage()),
+                () -> assertEquals(expectedShowDTO.getVoteCount(), actualShowDTO.getVoteCount()),
+                () -> assertEquals(1, actualShowDTO.getSeasons().size()),
+                () -> assertEquals(expectedShowDTO.getSeasons().get(0), actualShowDTO.getSeasons().get(0)),
+                () -> assertEquals(1, actualShowDTO.getGenres().size()),
+                () -> assertEquals(expectedShowDTO.getGenres().get(0), actualShowDTO.getGenres().get(0)),
+                () -> assertEquals(1, actualShowDTO.getCreators().size()),
+                () -> assertEquals(expectedShowDTO.getCreators().get(0), actualShowDTO.getCreators().get(0))
+        );
+
+        assertThat(actualShowDTO)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedShowDTO);
+        }
 }

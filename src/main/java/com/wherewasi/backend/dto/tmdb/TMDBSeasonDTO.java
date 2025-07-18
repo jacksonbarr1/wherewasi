@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -20,7 +21,7 @@ public class TMDBSeasonDTO {
     private List<TMDBEpisodeDTO> episodes;
 
     @JsonProperty("air_date")
-    private String airDate;
+    private Date airDate;
 
     @JsonProperty("poster_path")
     private String posterPath;
