@@ -154,25 +154,6 @@ public class ShowMapperTest extends AbstractTest {
 
         TMDBShowDTO actualShowDTO = showMapper.toDto(show);
 
-        assertAll("Ensure all TMDBShowDTO fields are mapped correctly",
-                () -> assertEquals(expectedShowDTO.getId(), actualShowDTO.getId()),
-                () -> assertEquals(expectedShowDTO.getName(), actualShowDTO.getName()),
-                () -> assertEquals(expectedShowDTO.getOverview(), actualShowDTO.getOverview()),
-                () -> assertEquals(expectedShowDTO.getPopularity(), actualShowDTO.getPopularity()),
-                () -> assertEquals(expectedShowDTO.getFirstAirDate(), actualShowDTO.getFirstAirDate()),
-                () -> assertEquals(expectedShowDTO.getLastAirDate(), actualShowDTO.getLastAirDate()),
-                () -> assertEquals(expectedShowDTO.getPosterPath(), actualShowDTO.getPosterPath()),
-                () -> assertEquals(expectedShowDTO.getBackdropPath(), actualShowDTO.getBackdropPath()),
-                () -> assertEquals(expectedShowDTO.getVoteAverage(), actualShowDTO.getVoteAverage()),
-                () -> assertEquals(expectedShowDTO.getVoteCount(), actualShowDTO.getVoteCount()),
-                () -> assertEquals(1, actualShowDTO.getSeasons().size()),
-                () -> assertEquals(expectedShowDTO.getSeasons().get(0), actualShowDTO.getSeasons().get(0)),
-                () -> assertEquals(1, actualShowDTO.getGenres().size()),
-                () -> assertEquals(expectedShowDTO.getGenres().get(0), actualShowDTO.getGenres().get(0)),
-                () -> assertEquals(1, actualShowDTO.getCreators().size()),
-                () -> assertEquals(expectedShowDTO.getCreators().get(0), actualShowDTO.getCreators().get(0))
-        );
-
         assertThat(actualShowDTO)
                 .usingRecursiveComparison()
                 .isEqualTo(expectedShowDTO);
