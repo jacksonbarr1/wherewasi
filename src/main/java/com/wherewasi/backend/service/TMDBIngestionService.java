@@ -2,8 +2,8 @@ package com.wherewasi.backend.service;
 
 import com.wherewasi.backend.client.TMDBApiClient;
 import com.wherewasi.backend.dto.tmdb.TMDBShowDTO;
-import com.wherewasi.backend.mapper.ShowMapper;
 import com.wherewasi.backend.entity.Show;
+import com.wherewasi.backend.mapper.ShowMapper;
 import com.wherewasi.backend.repository.ShowRepository;
 import org.springframework.stereotype.Service;
 

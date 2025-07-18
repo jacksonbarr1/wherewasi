@@ -1,9 +1,9 @@
 package com.wherewasi.backend.service;
 
+import com.wherewasi.backend.entity.User;
 import com.wherewasi.backend.enumeration.Role;
 import com.wherewasi.backend.exception.AuthenticationFailedException;
 import com.wherewasi.backend.exception.EmailTakenException;
-import com.wherewasi.backend.entity.User;
 import com.wherewasi.backend.repository.UserRepository;
 import com.wherewasi.backend.request.auth.AuthenticationRequest;
 import com.wherewasi.backend.request.auth.RegisterRequest;

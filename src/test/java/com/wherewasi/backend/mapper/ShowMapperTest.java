@@ -1,7 +1,10 @@
 package com.wherewasi.backend.mapper;
 
 import com.wherewasi.backend.AbstractTest;
-import com.wherewasi.backend.dto.tmdb.*;
+import com.wherewasi.backend.dto.tmdb.TMDBCreatorDTO;
+import com.wherewasi.backend.dto.tmdb.TMDBGenreDTO;
+import com.wherewasi.backend.dto.tmdb.TMDBSeasonDTO;
+import com.wherewasi.backend.dto.tmdb.TMDBShowDTO;
 import com.wherewasi.backend.entity.Creator;
 import com.wherewasi.backend.entity.Genre;
 import com.wherewasi.backend.entity.Season;
@@ -157,5 +160,5 @@ public class ShowMapperTest extends AbstractTest {
         assertThat(actualShowDTO)
                 .usingRecursiveComparison()
                 .isEqualTo(expectedShowDTO);
-        }
+    }
 }
