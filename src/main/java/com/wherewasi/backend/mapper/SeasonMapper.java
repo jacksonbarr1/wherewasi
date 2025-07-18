@@ -10,4 +10,7 @@ public interface SeasonMapper {
 
     @Mapping(target = "seasonName", source = "name")
     Season toEntity(TMDBSeasonDTO seasonDTO);
+
+    @Mapping(target = "name", source = "seasonName")
+    TMDBSeasonDTO toDto(Season season);
 }

@@ -7,4 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface GenreMapper {
     Genre toEntity(TMDBGenreDTO genreDTO);
+
+    TMDBGenreDTO toDto(Genre genre);
 }

@@ -10,4 +10,6 @@ import org.springframework.stereotype.Component;
 public interface ShowMapper {
 
     Show toEntity(TMDBShowDTO showDTO);
+
+    TMDBShowDTO toDto(Show show);
 }

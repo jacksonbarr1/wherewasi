@@ -8,4 +8,6 @@ import org.mapstruct.Mapper;
 public interface EpisodeMapper {
 
     Episode toEntity(TMDBEpisodeDTO episodeDTO);
+
+    TMDBEpisodeDTO toDto(Episode episode);
 }
