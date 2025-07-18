@@ -2,10 +2,10 @@ package com.wherewasi.backend.mapper;
 
 import com.wherewasi.backend.AbstractTest;
 import com.wherewasi.backend.dto.tmdb.*;
-import com.wherewasi.backend.model.Creator;
-import com.wherewasi.backend.model.Genre;
-import com.wherewasi.backend.model.Season;
-import com.wherewasi.backend.model.Show;
+import com.wherewasi.backend.entity.Creator;
+import com.wherewasi.backend.entity.Genre;
+import com.wherewasi.backend.entity.Season;
+import com.wherewasi.backend.entity.Show;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

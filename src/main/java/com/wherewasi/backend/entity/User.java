@@ -1,4 +1,4 @@
-package com.wherewasi.backend.model;
+package com.wherewasi.backend.entity;
 
 import com.wherewasi.backend.enumeration.Role;
 import jakarta.persistence.*;
