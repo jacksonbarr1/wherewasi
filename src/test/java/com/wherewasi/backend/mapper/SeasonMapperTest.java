@@ -86,4 +86,38 @@ public class SeasonMapperTest extends AbstractTest {
                 .usingRecursiveComparison()
                 .isEqualTo(expectedSeason);
     }
+
+    @Test
+    void whenGivenSeasonEntity_thenToDtoReturnsCorrectSeasonDTO() {
+        Season season = Season.builder()
+                .id(7240L)
+                .seasonName("Season 1")
+                .seasonNumber(1)
+                .episodeCount(2)
+                .episodes(List.of(
+                        Episode.builder().id(1L).name("Episode 1").episodeNumber(1).airDate(new Date(2023, 1, 1)).overview("Overview of Episode 1").build(),
+                        Episode.builder().id(2L).name("Episode 2").episodeNumber(2).airDate(new Date(2023, 1, 8)).overview("Overview of Episode 2").build()
+                ))
+                .build();
+
+        TMDBSeasonDTO expectedSeasonDTO = TMDBSeasonDTO.builder()
+                .id(7240L)
+                .name("Season 1")
+                .seasonNumber(1)
+                .episodeCount(2)
+                .episodes(List.of(
+                        TMDBEpisodeDTO.builder().id(1L).name("Episode 1").episodeNumber(1).airDate(new Date(2023, 1, 1)).overview("Overview of Episode 1").build(),
+                        TMDBEpisodeDTO.builder().id(2L).name("Episode 2").episodeNumber(2).airDate(new Date(2023, 1, 8)).overview("Overview of Episode 2").build()
+                ))
+                .build();
+
+        when(episodeMapper.toDto(season.getEpisodes().get(0))).thenReturn(expectedSeasonDTO.getEpisodes().get(0));
+        when(episodeMapper.toDto(season.getEpisodes().get(1))).thenReturn(expectedSeasonDTO.getEpisodes().get(1));
+
+        TMDBSeasonDTO actualSeasonDTO = seasonMapper.toDto(season);
+
+        assertThat(actualSeasonDTO)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedSeasonDTO);
+    }
 }
