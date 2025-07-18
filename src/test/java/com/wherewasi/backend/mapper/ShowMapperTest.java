@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -45,69 +46,54 @@ public class ShowMapperTest extends AbstractTest {
                 .backdropPath("backdropPath")
                 .voteAverage(8.58f)
                 .voteCount(100)
+                .seasons(List.of(TMDBSeasonDTO.builder().id(7240L).name("Season 1").seasonNumber(1).episodeCount(2).build()))
+                .genres(List.of(TMDBGenreDTO.builder().id(1L).name("Drama").build()))
+                .creators(List.of(TMDBCreatorDTO.builder().id(101L).name("Creator One").imagePath("/path/to/image1.jpg").build()))
                 .build();
 
-        TMDBSeasonDTO seasonDTO = TMDBSeasonDTO.builder()
-                .id(7240L)
-                .name("Season 1")
-                .seasonNumber(1)
-                .episodeCount(2)
+        Season expectedSeason = Season.builder().id(7240L).seasonName("Season 1").seasonNumber(1).episodeCount(2).build();
+        Genre expectedGenre = Genre.builder().id(1L).name("Drama").build();
+        Creator expectedCreator = Creator.builder().id(101L).name("Creator One").imagePath("/path/to/image1.jpg").build();
+
+        Show expectedShow = Show.builder()
+                .id(2316L)
+                .name("name")
+                .overview("overview")
+                .popularity(86.143f)
+                .firstAirDate(new Date(2023, 1, 1))
+                .lastAirDate(new Date(2025, 1, 1))
+                .posterPath("posterPath")
+                .backdropPath("backdropPath")
+                .voteAverage(8.58f)
+                .voteCount(100)
+                .seasons(List.of(expectedSeason))
+                .genres(List.of(expectedGenre))
+                .creators(List.of(expectedCreator))
                 .build();
 
-        TMDBGenreDTO genreOne = TMDBGenreDTO.builder()
-                .id(1L)
-                .name("Drama")
-                .build();
+        when(seasonMapper.toEntity(showDTO.getSeasons().get(0))).thenReturn(expectedSeason);
+        when(genreMapper.toEntity(showDTO.getGenres().get(0))).thenReturn(expectedGenre);
+        when(creatorMapper.toEntity(showDTO.getCreators().get(0))).thenReturn(expectedCreator);
 
-        TMDBCreatorDTO creatorOne = TMDBCreatorDTO.builder()
-                .id(101L)
-                .name("Creator One")
-                .imagePath("/path/to/image1.jpg")
-                .build();
+        Show actualShow = showMapper.toEntity(showDTO);
 
-        showDTO.setSeasons(List.of(seasonDTO));
-        showDTO.setGenres(List.of(genreOne));
-        showDTO.setCreators(List.of(creatorOne));
-
-        Season mockSeason = Season.builder()
-                .id(7240L)
-                .seasonName("Season 1")
-                .seasonNumber(1)
-                .episodeCount(2)
-                .build();
-
-        Genre mockGenre = Genre.builder()
-                .id(1L)
-                .name("Drama")
-                .build();
-
-        Creator mockCreator = Creator.builder()
-                .id(101L)
-                .name("Creator One")
-                .imagePath("/path/to/image1.jpg")
-                .build();
-
-        when(seasonMapper.toEntity(seasonDTO)).thenReturn(mockSeason);
-        when(genreMapper.toEntity(genreOne)).thenReturn(mockGenre);
-        when(creatorMapper.toEntity(creatorOne)).thenReturn(mockCreator);
-
-        Show show = showMapper.toEntity(showDTO);
-
-        assertEquals(showDTO.getId(), show.getId());
-        assertEquals(showDTO.getName(), show.getName());
-        assertEquals(showDTO.getOverview(), show.getOverview());
-        assertEquals(showDTO.getPopularity(), show.getPopularity());
-        assertEquals(showDTO.getFirstAirDate(), show.getFirstAirDate());
-        assertEquals(showDTO.getLastAirDate(), show.getLastAirDate());
-        assertEquals(showDTO.getPosterPath(), show.getPosterPath());
-        assertEquals(showDTO.getBackdropPath(), show.getBackdropPath());
-        assertEquals(showDTO.getVoteAverage(), show.getVoteAverage());
-        assertEquals(showDTO.getVoteCount(), show.getVoteCount());
-        assertEquals(1, show.getSeasons().size());
-        assertEquals(mockSeason, show.getSeasons().get(0));
-        assertEquals(1, show.getGenres().size());
-        assertEquals(mockGenre, show.getGenres().get(0));
-        assertEquals(1, show.getCreators().size());
-        assertEquals(mockCreator, show.getCreators().get(0));
+        assertAll("Ensure all Show fields are mapped correctly",
+                () -> assertEquals(expectedShow.getId(), actualShow.getId()),
+                () -> assertEquals(expectedShow.getName(), actualShow.getName()),
+                () -> assertEquals(expectedShow.getOverview(), actualShow.getOverview()),
+                () -> assertEquals(expectedShow.getPopularity(), actualShow.getPopularity()),
+                () -> assertEquals(expectedShow.getFirstAirDate(), actualShow.getFirstAirDate()),
+                () -> assertEquals(expectedShow.getLastAirDate(), actualShow.getLastAirDate()),
+                () -> assertEquals(expectedShow.getPosterPath(), actualShow.getPosterPath()),
+                () -> assertEquals(expectedShow.getBackdropPath(), actualShow.getBackdropPath()),
+                () -> assertEquals(expectedShow.getVoteAverage(), actualShow.getVoteAverage()),
+                () -> assertEquals(expectedShow.getVoteCount(), actualShow.getVoteCount()),
+                () -> assertEquals(1, actualShow.getSeasons().size()),
+                () -> assertEquals(expectedSeason, actualShow.getSeasons().get(0)),
+                () -> assertEquals(1, actualShow.getGenres().size()),
+                () -> assertEquals(expectedGenre, actualShow.getGenres().get(0)),
+                () -> assertEquals(1, actualShow.getCreators().size()),
+                () -> assertEquals(expectedCreator, actualShow.getCreators().get(0))
+        );
     }
 }
