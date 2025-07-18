@@ -26,7 +26,7 @@ public class Show {
     private Float voteAverage;
     private Integer voteCount;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "show_season",
             joinColumns = @JoinColumn(name = "show_id"),
@@ -34,7 +34,7 @@ public class Show {
     )
     private List<Season> seasons;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "show_genre",
             joinColumns = @JoinColumn(name = "show_id"),
@@ -42,7 +42,7 @@ public class Show {
     )
     private List<Genre> genres;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "show_creator",
             joinColumns = @JoinColumn(name = "show_id"),
