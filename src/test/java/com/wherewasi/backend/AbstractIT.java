@@ -1,5 +1,6 @@
 package com.wherewasi.backend;
 
+import config.SharedPostgreSQLContainer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -12,12 +13,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Testcontainers
-@DirtiesContext
 public abstract class AbstractIT {
 
-    @Container
-    private static final PostgreSQLContainer<?> postgresqlContainer =
-            new PostgreSQLContainer<>("postgres:17-alpine");
+    protected static final PostgreSQLContainer<?> postgresqlContainer = SharedPostgreSQLContainer.INSTANCE;
 
     @DynamicPropertySource
     static void setDatasourceProperties(DynamicPropertyRegistry registry) {
