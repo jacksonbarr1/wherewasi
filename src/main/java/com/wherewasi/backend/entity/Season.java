@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "season")
 public class Season {
@@ -20,5 +21,6 @@ public class Season {
     private Integer episodeCount;
 
     @OneToMany(mappedBy = "season", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Episode> episodes;
 }

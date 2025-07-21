@@ -3,17 +3,15 @@ package com.wherewasi.backend.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Getter
+@ToString
+@Entity
 @Table(name = "creator")
 public class Creator {
     @Id
