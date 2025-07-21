@@ -1,10 +1,12 @@
 package com.wherewasi.backend.mapper;
 
 import com.wherewasi.backend.dto.tmdb.TMDBGenreDTO;
-import com.wherewasi.backend.model.Genre;
+import com.wherewasi.backend.entity.Genre;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface GenreMapper {
     Genre toEntity(TMDBGenreDTO genreDTO);
+
+    TMDBGenreDTO toDto(Genre genre);
 }

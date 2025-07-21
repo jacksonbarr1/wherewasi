@@ -1,15 +1,16 @@
-package com.wherewasi.backend.model;
+package com.wherewasi.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "season")
 public class Season {
@@ -20,5 +21,6 @@ public class Season {
     private Integer episodeCount;
 
     @OneToMany(mappedBy = "season", cascade = CascadeType.ALL)
-    private Set<Episode> episodes;
+    @ToString.Exclude
+    private List<Episode> episodes;
 }

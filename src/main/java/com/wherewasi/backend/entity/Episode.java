@@ -1,4 +1,4 @@
-package com.wherewasi.backend.model;
+package com.wherewasi.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,6 +10,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "episode")
 public class Episode {

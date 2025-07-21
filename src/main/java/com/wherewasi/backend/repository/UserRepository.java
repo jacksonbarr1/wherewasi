@@ -1,6 +1,6 @@
 package com.wherewasi.backend.repository;
 
-import com.wherewasi.backend.model.User;
+import com.wherewasi.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

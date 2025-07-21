@@ -1,16 +1,17 @@
-package com.wherewasi.backend.model;
+package com.wherewasi.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "show")
 public class Show {
@@ -26,27 +27,30 @@ public class Show {
     private Float voteAverage;
     private Integer voteCount;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "show_season",
             joinColumns = @JoinColumn(name = "show_id"),
             inverseJoinColumns = @JoinColumn(name = "season_id")
     )
-    private Set<Season> seasons;
+    @ToString.Exclude
+    private List<Season> seasons;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "show_genre",
             joinColumns = @JoinColumn(name = "show_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private Set<Genre> genres;
+    @ToString.Exclude
+    private List<Genre> genres;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "show_creator",
             joinColumns = @JoinColumn(name = "show_id"),
             inverseJoinColumns = @JoinColumn(name = "creator_id")
     )
-    private Set<Creator> creators;
+    @ToString.Exclude
+    private List<Creator> creators;
 }

@@ -1,7 +1,7 @@
 package com.wherewasi.backend.repository;
 
 import com.wherewasi.backend.AbstractIT;
-import com.wherewasi.backend.model.User;
+import com.wherewasi.backend.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
