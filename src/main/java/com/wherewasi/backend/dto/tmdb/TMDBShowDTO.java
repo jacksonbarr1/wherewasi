@@ -2,20 +2,17 @@ package com.wherewasi.backend.dto.tmdb;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TMDBShowDTO {
     private Long id;
+    private Boolean adult;
     @JsonProperty("backdrop_path")
     private String backdropPath;
     @JsonProperty("created_by")
@@ -58,21 +55,32 @@ public class TMDBShowDTO {
     @JsonProperty("vote_count")
     private Integer voteCount;
 
+    @Data
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TMDBCreatorDTO {
         private Long id;
         @JsonProperty("credit_id")
         private String creditId;
         private String name;
         private Integer gender;
+        @JsonProperty("original_name")
+        private String originalName;
         @JsonProperty("profile_path")
         private String profilePath;
     }
 
+    @Data
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TMDBGenreDTO {
         private Long id;
         private String name;
     }
 
+    @Data
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TMDBEpisodeSummaryDTO {
         private Long id;
         private String name;
@@ -96,6 +104,9 @@ public class TMDBShowDTO {
         private String stillPath;
     }
 
+    @Data
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TMDBSeasonSummaryDTO {
         @JsonProperty("air_date")
         private String airDate;
@@ -112,6 +123,9 @@ public class TMDBShowDTO {
         private Float voteAverage;
     }
 
+    @Data
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TMDBNetworkDTO {
         private Long id;
         @JsonProperty("logo_path")
