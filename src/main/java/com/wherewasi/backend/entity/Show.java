@@ -26,6 +26,7 @@ public class Show {
     private Float popularity;
     private Float voteAverage;
     private Integer voteCount;
+    private Boolean inProduction;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
