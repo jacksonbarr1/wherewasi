@@ -3,22 +3,21 @@ package com.wherewasi.backend.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wherewasi.backend.dto.tmdb.TMDBShowDTO;
 import com.wherewasi.backend.dto.tmdb.TMDBShowIdExportDTO;
-import org.mapstruct.Mapping;
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.http.converter.ByteArrayHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
@@ -33,9 +32,18 @@ public class TMDBApiClient {
     private static final String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
     private static final String TMDB_FILE_EXPORT_URL = "http://files.tmdb.org/p/exports/";
 
+    // TMDB has 50 req/s rate limit
+    private final Bucket apiRequestBucket;
+
     public TMDBApiClient(RestClient restClient, ObjectMapper objectMapper) {
         this.restClient = restClient;
         this.objectMapper = objectMapper;
+
+        Bandwidth limit = Bandwidth.simple(50, Duration.ofSeconds(1));
+
+        this.apiRequestBucket = Bucket.builder()
+                .addLimit(limit)
+                .build();
     }
 
     public Stream<TMDBShowIdExportDTO> downloadAndStreamShowIds(LocalDate localDate) {
@@ -83,11 +91,49 @@ public class TMDBApiClient {
         }
     }
 
+    public Optional<TMDBShowDTO> getTMDBShowDetails(Long showId) {
+        URI uri = URI.create(String.format("%s/tv/%d", TMDB_API_BASE_URL, showId));
+        return executeApiCall(uri, TMDBShowDTO.class, "TMDB Show Details", showId);
+    }
 
-    public TMDBShowDTO getTMDBShowDetails(Long showId) {
-        return restClient.get()
-                .uri(TMDB_API_BASE_URL + "/tv/{id}", showId)
-                .retrieve()
-                .body(TMDBShowDTO.class);
+    private <T> Optional<T> executeApiCall(URI uri, Class<T> responseType, String description, Object... identifiers) {
+        try {
+            apiRequestBucket.asBlocking().consume(1);
+
+            T responseBody = restClient.get()
+                    .uri(uriBuilder -> uriBuilder.path(uri.getPath())
+                            .build())
+                    .retrieve()
+                    .onStatus(HttpStatus.NOT_FOUND::equals, (req, res) -> {
+                        throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Not Found for " + description + ": " + identifiers[0]);
+                    })
+                    .onStatus(HttpStatus.TOO_MANY_REQUESTS::equals, (req, res) -> {
+                        throw new HttpClientErrorException(HttpStatus.TOO_MANY_REQUESTS, "Too Many Requests for " + description + ": " + identifiers[0]);
+                    })
+                    .body(responseType);
+
+            if (responseBody != null) {
+                return Optional.of(responseBody);
+            } else {
+                logger.warn("API call for {} returned null body. Identifiers: {}", description, identifiers);
+                return Optional.empty();
+            }
+        } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("API call for {} returned 404 Not Found. Identifiers: {}", description, identifiers);
+            return Optional.empty();
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            logger.warn("API call for {} returned 429 Too Many Requests. Identifiers: {}", description, identifiers);
+            return Optional.empty();
+        } catch (RestClientException e) {
+            logger.error("API call for {} failed with error: {}. Identifiers: {}", description, e.getMessage(), identifiers);
+            return Optional.empty();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error("API call for {} was interrupted while waiting for rate limit token. Identifiers: {}", description, identifiers);
+            return Optional.empty();
+        } catch (Exception e) {
+            logger.error("API call for {} failed with unexpected error: {}. Identifiers: {}", description, e.getMessage(), identifiers);
+            return Optional.empty();
+        }
     }
 }
