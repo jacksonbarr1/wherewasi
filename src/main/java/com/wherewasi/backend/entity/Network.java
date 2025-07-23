@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "genre")
+@Table(name = "network")
 public class Network {
     @Id
     Long id;
