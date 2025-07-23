@@ -3,6 +3,7 @@ package com.wherewasi.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -16,9 +17,14 @@ import java.util.List;
 public class Season {
     @Id
     private Long id;
-    private String seasonName;
+    private String name;
     private Integer seasonNumber;
     private Integer episodeCount;
+    private LocalDate airDate;
+    private String posterPath;
+    @Column(columnDefinition = "TEXT")
+    private String overview;
+    private Float voteAverage;
 
     @OneToMany(mappedBy = "season", cascade = CascadeType.ALL)
     @ToString.Exclude

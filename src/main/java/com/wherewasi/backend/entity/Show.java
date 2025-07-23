@@ -3,7 +3,9 @@ package com.wherewasi.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,15 +19,26 @@ import java.util.List;
 public class Show {
     @Id
     private Long id;
+    private Boolean adult;
+    private String homepage;
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String overview;
-    private Date firstAirDate;
-    private Date lastAirDate;
+    private LocalDate firstAirDate;
+    private LocalDate lastAirDate;
     private String posterPath;
     private String backdropPath;
     private Float popularity;
     private Float voteAverage;
     private Integer voteCount;
+    private Boolean isInProduction;
+    private String status;
+    private String tagline;
+    private String type;
+    private Integer numberOfEpisodes;
+    private Integer numberOfSeasons;
+
+    private LocalDateTime lastApiFetchTimestamp;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -53,4 +66,13 @@ public class Show {
     )
     @ToString.Exclude
     private List<Creator> creators;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "show_network",
+            joinColumns = @JoinColumn(name = "show_id"),
+            inverseJoinColumns = @JoinColumn(name = "network_id")
+    )
+    @ToString.Exclude
+    private List<Network> networks;
 }

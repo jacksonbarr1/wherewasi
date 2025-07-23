@@ -19,6 +19,7 @@ public class Episode {
     private Integer episodeNumber;
     private Date airDate;
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String overview;
     private Float voteAverage;
     private Integer voteCount;
