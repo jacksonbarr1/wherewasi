@@ -1,22 +1,23 @@
 package com.wherewasi.backend.entity;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 @ToString
 @Entity
-@Table(name = "creator")
-public class Creator {
+@Table(name = "genre")
+public class Network {
     @Id
-    private Long id;
+    Long id;
+    private String logoPath;
     private String name;
-    private String imagePath;
+    private String originCountry;
 }

@@ -35,8 +35,8 @@ public class TMDBApiClient {
     // TMDB has 50 req/s rate limit
     private final Bucket apiRequestBucket;
 
-    public TMDBApiClient(RestClient restClient, ObjectMapper objectMapper) {
-        this.restClient = restClient;
+    public TMDBApiClient(RestClient tmdbRestClient, ObjectMapper objectMapper) {
+        this.restClient = tmdbRestClient;
         this.objectMapper = objectMapper;
 
         Bandwidth limit = Bandwidth.simple(50, Duration.ofSeconds(1));
@@ -100,9 +100,9 @@ public class TMDBApiClient {
         try {
             apiRequestBucket.asBlocking().consume(1);
 
+            logger.info("Making API call to {} for {} with identifiers: {}", uri, description, identifiers);
             T responseBody = restClient.get()
-                    .uri(uriBuilder -> uriBuilder.path(uri.getPath())
-                            .build())
+                    .uri(uri)
                     .retrieve()
                     .onStatus(HttpStatus.NOT_FOUND::equals, (req, res) -> {
                         throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Not Found for " + description + ": " + identifiers[0]);

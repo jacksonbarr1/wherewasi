@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,13 +30,13 @@ public class ShowRepositoryIT extends AbstractIT {
                 .name("name")
                 .overview("overview")
                 .popularity(86.143f)
-                .firstAirDate(new Date(2023, 1, 1))
-                .lastAirDate(new Date(2025, 1, 1))
+                .firstAirDate(LocalDate.of(2023, 1, 1))
+                .lastAirDate(LocalDate.of(2025, 1, 1))
                 .posterPath("posterPath")
                 .backdropPath("backdropPath")
                 .voteAverage(8.58f)
                 .voteCount(100)
-                .seasons(List.of(Season.builder().id(7240L).seasonName("Season 1").seasonNumber(1).episodeCount(2).build()))
+                .seasons(List.of(Season.builder().id(7240L).name("Season 1").seasonNumber(1).episodeCount(2).build()))
                 .genres(List.of(Genre.builder().id(1L).name("Drama").build()))
                 .creators(List.of(Creator.builder().id(101L).name("Creator One").imagePath("/path/to/image1.jpg").build()))
                 .build();

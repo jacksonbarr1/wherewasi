@@ -1,6 +1,7 @@
 package com.wherewasi.backend.service;
 
 import com.wherewasi.backend.AbstractTest;
+import com.wherewasi.backend.dto.tmdb.TMDBShowIdExportDTO;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,18 +13,22 @@ public class TMDBIngestionServiceTest extends AbstractTest {
 
     @Test
     void whenGivenEnglishOnlyString_thenReturnsTrue() {
-        String example = "English: 101";
+        TMDBShowIdExportDTO example = TMDBShowIdExportDTO.builder()
+                .name("English: 101")
+                .build();
 
-        boolean result = tmdbIngestionService.isEnglishCharactersOnly(example);
+        boolean result = tmdbIngestionService.isEnglishName(example);
 
         assertTrue(result);
     }
 
     @Test
     void whenGivenNonEnglishOnlyString_thenReturnsTrue() {
-        String example = "プライド";
+        TMDBShowIdExportDTO example = TMDBShowIdExportDTO.builder()
+                .name("プライド")
+                .build();
 
-        boolean result = tmdbIngestionService.isEnglishCharactersOnly(example);
+        boolean result = tmdbIngestionService.isEnglishName(example);
 
         assertFalse(result);
     }
