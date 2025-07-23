@@ -18,7 +18,6 @@ public interface DateMapper {
         try {
             return LocalDate.parse(dateString);
         } catch (DateTimeException e) {
-            System.err.println("Error parsing date: " + dateString + " - " + e.getMessage());
             return null;
         }
     }
