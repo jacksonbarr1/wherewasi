@@ -25,7 +25,7 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
 
     // TODO: Use generics to decouple processing logic from specific nested DTO types
 
-    Logger logger = LoggerFactory.getLogger(TMDBIngestionServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TMDBIngestionServiceImpl.class);
 
     @Autowired
     private ShowRepository showRepository;
