@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 public class TMDBIngestionServiceImpl implements TMDBIngestionService {
 
     // TODO: Use generics to decouple processing logic from specific nested DTO types
+    // TODO: Implement schedule for calling ingestion job
 
     private static final Logger logger = LoggerFactory.getLogger(TMDBIngestionServiceImpl.class);
 
@@ -85,7 +86,7 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
                         .thenComparing(TMDBShowIdExportDTO::getName, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
     }
 
-    void processShow(Long showId) {
+    public void processShow(Long showId) {
         logger.info("Processing show with ID: {}", showId);
         Optional<TMDBShowDTO> showDTOOptional = tmdbApiClient.getTMDBShowDetails(showId);
 
