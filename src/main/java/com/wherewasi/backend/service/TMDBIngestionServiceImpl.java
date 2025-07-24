@@ -1,11 +1,13 @@
 package com.wherewasi.backend.service;
 
 import com.wherewasi.backend.client.TMDBApiClient;
+import com.wherewasi.backend.dto.tmdb.TMDBEpisodeDTO;
 import com.wherewasi.backend.dto.tmdb.TMDBShowDTO;
 import com.wherewasi.backend.dto.tmdb.TMDBShowIdExportDTO;
 import com.wherewasi.backend.entity.*;
 import com.wherewasi.backend.mapper.*;
 import com.wherewasi.backend.repository.*;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,9 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
     private SeasonRepository seasonRepository;
 
     @Autowired
+    private EpisodeRepository episodeRepository;
+
+    @Autowired
     private TMDBApiClient tmdbApiClient;
 
     @Autowired
@@ -60,6 +65,9 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
 
     @Autowired
     private SeasonMapper seasonMapper;
+
+    @Autowired
+    private EpisodeMapper episodeMapper;
 
     @Override
     @Scheduled
@@ -86,6 +94,7 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
                         .thenComparing(TMDBShowIdExportDTO::getName, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
     }
 
+    @Transactional
     public void processShow(Long showId) {
         logger.info("Processing show with ID: {}", showId);
         Optional<TMDBShowDTO> showDTOOptional = tmdbApiClient.getTMDBShowDetails(showId);
@@ -111,11 +120,60 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
         processNetworks(showDTO.getNetworks(), show);
         processSeasons(showDTO.getSeasons(), show);
 
+        // Iterate through each season and call `processEpisode` for episode numbers [1, season.episodeCount]
+        for (Season season : show.getSeasons()) {
+            if (season.getEpisodes() == null || season.getEpisodes().isEmpty()) {
+                logger.info("Season {} for show ID {} has no episodes, processing episodes now", season.getSeasonNumber(), show.getId());
+                List<Episode> episodes = new ArrayList<>();
+                season.setEpisodes(episodes);
+            }
+            ingestEpisodesBySeason(show, season);
+            seasonRepository.save(season);
+        }
+
         showRepository.save(show);
     }
 
-    private void processEpisode(Long showId, Integer seasonNumber, Integer episodeNumber) {
-        // Implementation for processing an episode by show ID, season number, and episode number
+    private void ingestEpisodesBySeason(Show show, Season season) {
+        if (season.getEpisodeCount() == null || season.getEpisodeCount() <= 0) {
+            logger.warn("Season {} for show ID {} has no episodes to process", season.getSeasonNumber(), show.getId());
+            return;
+        }
+
+        logger.info("Processing episodes for show ID {} in season {}", show.getId(), season.getSeasonNumber());
+
+        for (int episodeNumber = 1; episodeNumber <= season.getEpisodeCount(); episodeNumber++) {
+            processEpisode(show.getId(), season, episodeNumber);
+        }
+    }
+
+    private void processEpisode(Long showId, Season season, Integer episodeNumber) {
+        logger.info("Retrieving S{}E{} details for show ID {}", season.getSeasonNumber(), episodeNumber, showId);
+
+        // Retrieve episode DTO from TMDB API
+        Optional<TMDBEpisodeDTO> episodeDTOOptional = tmdbApiClient.getTMDBEpisodeDetails(showId,
+                season.getSeasonNumber(), episodeNumber);
+
+        // Map to Episode entity
+
+        if (episodeDTOOptional.isEmpty()) {
+            logger.warn("Failed to retrieve details for S{}E{} of show ID {}", season.getSeasonNumber(), episodeNumber, showId);
+            return;
+        }
+
+        TMDBEpisodeDTO episodeDTO = episodeDTOOptional.get();
+
+        Episode episode = episodeMapper.dtoToEpisode(episodeDTO);
+
+        // Add to season's episode list
+        episode.setSeason(season);
+        List<Episode> episodes = season.getEpisodes();
+        episodes.add(episode);
+        season.setEpisodes(episodes);
+
+        logger.info("Saving episode: {}", episode);
+
+        episodeRepository.save(episode);
     }
 
     private void processGenres(List<TMDBShowDTO.TMDBGenreDTO> genreDTOs, Show show) {

@@ -1,6 +1,7 @@
 package com.wherewasi.backend.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wherewasi.backend.dto.tmdb.TMDBEpisodeDTO;
 import com.wherewasi.backend.dto.tmdb.TMDBShowDTO;
 import com.wherewasi.backend.dto.tmdb.TMDBShowIdExportDTO;
 import io.github.bucket4j.Bandwidth;
@@ -94,6 +95,11 @@ public class TMDBApiClient {
     public Optional<TMDBShowDTO> getTMDBShowDetails(Long showId) {
         URI uri = URI.create(String.format("%s/tv/%d", TMDB_API_BASE_URL, showId));
         return executeApiCall(uri, TMDBShowDTO.class, "TMDB Show Details", showId);
+    }
+
+    public Optional<TMDBEpisodeDTO> getTMDBEpisodeDetails(Long showId, int seasonNumber, int episodeNumber) {
+        URI uri = URI.create(String.format("%s/tv/%d/season/%d/episode/%d", TMDB_API_BASE_URL, showId, seasonNumber, episodeNumber));
+        return executeApiCall(uri, TMDBEpisodeDTO.class, "TMDB Episode Details", showId, seasonNumber, episodeNumber);
     }
 
     private <T> Optional<T> executeApiCall(URI uri, Class<T> responseType, String description, Object... identifiers) {
