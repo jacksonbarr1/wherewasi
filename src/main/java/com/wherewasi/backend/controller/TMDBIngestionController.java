@@ -14,7 +14,7 @@ public class TMDBIngestionController {
     private TMDBIngestionServiceImpl tmdbIngestionService;
 
     @PostMapping("/show/{showId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<String> ingestShow(@PathVariable Long showId) {
         tmdbIngestionService.processShow(showId);
 
