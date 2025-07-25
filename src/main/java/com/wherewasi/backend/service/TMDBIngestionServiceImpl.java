@@ -7,10 +7,10 @@ import com.wherewasi.backend.dto.tmdb.TMDBShowIdExportDTO;
 import com.wherewasi.backend.entity.*;
 import com.wherewasi.backend.mapper.*;
 import com.wherewasi.backend.repository.*;
+import com.wherewasi.backend.util.StringUtil;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,44 +30,41 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
 
     private static final Logger logger = LoggerFactory.getLogger(TMDBIngestionServiceImpl.class);
 
-    @Autowired
-    private ShowRepository showRepository;
+    private final ShowRepository showRepository;
+    private final GenreRepository genreRepository;
+    private final CreatorRepository creatorRepository;
+    private final NetworkRepository networkRepository;
+    private final SeasonRepository seasonRepository;
+    private final EpisodeRepository episodeRepository;
+    private final TMDBApiClient tmdbApiClient;
+    private final ShowMapper showMapper;
+    private final GenreMapper genreMapper;
+    private final CreatorMapper creatorMapper;
+    private final NetworkMapper networkMapper;
+    private final SeasonMapper seasonMapper;
+    private final EpisodeMapper episodeMapper;
 
-    @Autowired
-    private GenreRepository genreRepository;
+    public TMDBIngestionServiceImpl(ShowRepository showRepository, GenreRepository genreRepository,
+                                    CreatorRepository creatorRepository, NetworkRepository networkRepository,
+                                    SeasonRepository seasonRepository, EpisodeRepository episodeRepository,
+                                    TMDBApiClient tmdbApiClient, ShowMapper showMapper, GenreMapper genreMapper,
+                                    CreatorMapper creatorMapper, NetworkMapper networkMapper, SeasonMapper seasonMapper,
+                                    EpisodeMapper episodeMapper) {
+        this.showRepository = showRepository;
+        this.genreRepository = genreRepository;
+        this.creatorRepository = creatorRepository;
+        this.networkRepository = networkRepository;
+        this.seasonRepository = seasonRepository;
+        this.episodeRepository = episodeRepository;
+        this.tmdbApiClient = tmdbApiClient;
+        this.showMapper = showMapper;
+        this.genreMapper = genreMapper;
+        this.creatorMapper = creatorMapper;
+        this.networkMapper = networkMapper;
+        this.seasonMapper = seasonMapper;
+        this.episodeMapper = episodeMapper;
+    }
 
-    @Autowired
-    private CreatorRepository creatorRepository;
-
-    @Autowired
-    private NetworkRepository networkRepository;
-
-    @Autowired
-    private SeasonRepository seasonRepository;
-
-    @Autowired
-    private EpisodeRepository episodeRepository;
-
-    @Autowired
-    private TMDBApiClient tmdbApiClient;
-
-    @Autowired
-    private ShowMapper showMapper;
-
-    @Autowired
-    private GenreMapper genreMapper;
-
-    @Autowired
-    private CreatorMapper creatorMapper;
-
-    @Autowired
-    private NetworkMapper networkMapper;
-
-    @Autowired
-    private SeasonMapper seasonMapper;
-
-    @Autowired
-    private EpisodeMapper episodeMapper;
 
     @Override
     @Scheduled
@@ -88,7 +85,7 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
 
         logger.info("Filtering and sorting retrieved show IDs");
         return showIdStream
-                .filter(this::isEnglishName)
+                .filter(dto -> StringUtil.isEnglishOnly(dto.getName()))
                 .sorted(Comparator
                         .comparing(TMDBShowIdExportDTO::getPopularity, Comparator.nullsLast(Comparator.reverseOrder()))
                         .thenComparing(TMDBShowIdExportDTO::getName, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
@@ -96,6 +93,12 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
 
     @Transactional
     public void processShow(Long showId) {
+
+        // TODO: Determine if show already exists in the database
+        // If show exists and show status is ended, skip processing
+        // If show exists and show status is not ended but fetched show episode count is the same as the existing show,
+        //     skip processing
+
         logger.info("Processing show with ID: {}", showId);
         Optional<TMDBShowDTO> showDTOOptional = tmdbApiClient.getTMDBShowDetails(showId);
 
@@ -121,6 +124,7 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
         processSeasons(showDTO.getSeasons(), show);
 
         // Iterate through each season and call `processEpisode` for episode numbers [1, season.episodeCount]
+
         for (Season season : show.getSeasons()) {
             if (season.getEpisodes() == null || season.getEpisodes().isEmpty()) {
                 logger.info("Season {} for show ID {} has no episodes, processing episodes now", season.getSeasonNumber(), show.getId());
@@ -253,13 +257,5 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
         }
 
         show.setSeasons(currentSeasons);
-    }
-
-    boolean isEnglishName(TMDBShowIdExportDTO dto) {
-        if (dto == null || dto.getName() == null) {
-            return false;
-        }
-
-        return dto.getName().chars().allMatch(c -> c >= 32 && c <= 126);
     }
 }
