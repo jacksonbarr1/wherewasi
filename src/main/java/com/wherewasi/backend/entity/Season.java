@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -28,5 +30,5 @@ public class Season {
 
     @OneToMany(mappedBy = "season", cascade = CascadeType.ALL)
     @ToString.Exclude
-    private List<Episode> episodes;
+    private List<Episode> episodes = new ArrayList<>();
 }
