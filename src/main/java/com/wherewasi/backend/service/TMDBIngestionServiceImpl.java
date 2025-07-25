@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -67,10 +68,10 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
 
 
     @Override
-    @Scheduled
+    @Scheduled(cron = "0 19 20 * * *", zone="America/New_York")
     public void dailyIngestionJob() {
         // Get exported id file, filter, sort
-        Stream<TMDBShowIdExportDTO> processedStream = processDatedIdFile(LocalDate.now());
+        Stream<TMDBShowIdExportDTO> processedStream = processDatedIdFile(LocalDate.now(ZoneId.of("America/New_York")));
 
         // Retrieve and persist details for each show in the stream
         processedStream.forEach(tmdbShowIdExportDTO -> {
@@ -98,6 +99,8 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
         // If show exists and show status is ended, skip processing
         // If show exists and show status is not ended but fetched show episode count is the same as the existing show,
         //     skip processing
+
+        // TODO: Skip talk shows, news shows, and other non-episodic content because holy crap
 
         logger.info("Processing show with ID: {}", showId);
         Optional<TMDBShowDTO> showDTOOptional = tmdbApiClient.getTMDBShowDetails(showId);
