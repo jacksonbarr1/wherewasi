@@ -119,7 +119,7 @@ public class TMDBIngestionServiceImpl implements TMDBIngestionService {
 
         if (existingShowOptional.isPresent()) {
             Show existingShow = existingShowOptional.get();
-            if (existingShow.getStatus() == "Ended") {
+            if (existingShow.getStatus().equals("Ended")) {
                 logger.info("Skipping processing for show ID {} as it has ended", showId);
                 return;
             }

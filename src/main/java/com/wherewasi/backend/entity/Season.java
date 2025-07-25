@@ -31,8 +31,4 @@ public class Season {
     @OneToMany(mappedBy = "season", cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<Episode> episodes = new ArrayList<>();
-
-    public List<Episode> getEpisodes() {
-        return Objects.requireNonNullElseGet(episodes, ArrayList::new);
-    }
 }

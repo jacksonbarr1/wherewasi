@@ -20,7 +20,6 @@ public class DefaultAdminUserInitializer {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TMDBIngestionServiceImpl tmdbIngestionService;
 
     @Value("${app.admin.email}")
     private String adminEmail;
@@ -43,10 +42,5 @@ public class DefaultAdminUserInitializer {
             logger.info("Default admin user already exists with email: {}", adminEmail);
         }
     }
-
-//    @EventListener(ApplicationReadyEvent.class)
-//    public void testIngestionProcess() {
-//        tmdbIngestionService.dailyIngestionJob();
-//    }
 
 }
